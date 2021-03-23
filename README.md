@@ -1,2 +1,2 @@
-# animejs-playground
-Playground for animejs library
+# microinteracrions-playground
+Playground for creation of microinteractions in web.
