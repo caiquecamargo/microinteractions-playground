@@ -17,6 +17,12 @@ body {
   padding: 15px;
 }
 
+.container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
 .button {
   background: none;
   padding: 5px 20px;
@@ -28,6 +34,18 @@ body {
 
 .button:hover {
   background-color: green;
+}
+
+.button__sandwich {
+  cursor: pointer;
+
+  & > div {
+    height: 5px;
+    width: 30px;
+    border-radius: 5px;
+    background-color: black;
+    margin-bottom: 5px;
+  }
 }
 
 #one {
@@ -79,11 +97,6 @@ body {
 }
 
 #three {
-  
-  .container {
-    margin-top: 15px;
-    width: 100%;
-  }
 
   .text {
     .letter {
@@ -93,12 +106,6 @@ body {
 }
 
 #four {
-  
-  .container {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-  }
 
   .loading {
     width: 15px;
@@ -111,9 +118,6 @@ body {
 #five {
   
   .container {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
     background: black;
   }
 
@@ -122,6 +126,68 @@ body {
 
     path {
       stroke: white;
+    }
+  }
+}
+
+#seven {
+
+  .container {
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+    height: 200px;
+  }
+
+  .button__sandwich {
+    z-index: 2;
+  }
+
+  .round_collor_pallete {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    z-index: 1;
+    background: transparent;
+
+    position: absolute;
+    left: calc(50% - 125px);
+    top: -125px;
+    
+    &__child {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .one {
+      background: blue;
+      clip-path: polygon(50% 50%, 0% 50%, 0% 75%);
+    }
+
+    .two {
+      background: green;
+      clip-path: polygon(50% 50%, 0% 75%, 0% 100%);
+    }
+
+    .three {
+      background: yellow;
+      clip-path: polygon(50% 50%, 0% 100%, 25% 100%);
+    }
+
+    .four {
+      background: red;
+      clip-path: polygon(50% 50%, 25% 100%, 50% 100%);
+    }
+
+    .eraser {
+      width: 50%;
+      height: 50%;
+      background: white;
+      top: 25%;
+      left: 25%;
+      clip-path: polygon(51% 49%, 0% 49%, 0% 100%, 51% 100%);
     }
   }
 }

@@ -133,22 +133,110 @@ import anime from 'animejs';
     event.preventDefault();
     svg.play();
   })
+
+  // Cria as animações de forma aleatória
+
+  // var pathEls = document.querySelectorAll('path');
+  // for (var i = 0; i < pathEls.length; i++) {
+  //   var pathEl = pathEls[i];
+  //   var offset = anime.setDashoffset(pathEl);
+  //   pathEl.setAttribute('stroke-dashoffset', offset.toString());
+  //   anime({
+  //     targets: pathEl,
+  //     strokeDashoffset: [offset, 0],
+  //     duration: anime.random(1000, 3000),
+  //     delay: anime.random(0, 2000),
+  //     loop: true,
+  //     direction: 'alternate',
+  //     easing: 'easeInOutSine',
+  //     autoplay: true
+  //   });
+  // }
 }
 
-// var pathEls = document.querySelectorAll('path');
-// // console.log(pathEls)
-// for (var i = 0; i < pathEls.length; i++) {
-//   var pathEl = pathEls[i];
-//   var offset = anime.setDashoffset(pathEl);
-//   pathEl.setAttribute('stroke-dashoffset', offset.toString());
-//   anime({
-//     targets: pathEl,
-//     strokeDashoffset: [offset, 0],
-//     duration: anime.random(1000, 3000),
-//     delay: anime.random(0, 2000),
-//     loop: true,
-//     direction: 'alternate',
-//     easing: 'easeInOutSine',
-//     autoplay: true
-//   });
-// }
+// SIX
+{
+  const buttonSandwich = document.querySelector("#sandwich1");
+
+  const sandwich = anime.timeline({
+    targets: buttonSandwich.children,
+    autoplay: false,
+    easing: 'easeOutSine',
+    duration: 250,
+  })
+    .add({
+      opacity: (el, index) => {
+        if (index === 1) return [1, 0];
+      },
+      translateY: (el, index) => {
+        const qty = 10;
+        if (index === 1) return 0;
+        return index ? -qty : qty;
+      },
+    })
+    .add({
+      rotateZ: (el, index) => {
+        const qty = 45;
+        if (index === 1) return 0;
+        return index ? -qty : qty;
+      }
+    })
+
+  buttonSandwich.addEventListener('click', async (event) => {
+    event.preventDefault();
+    sandwich.play();
+    await sandwich.finished;
+    sandwich.reverse();
+  })
+}
+
+// SEVEN
+{
+  const buttonSandwich = document.querySelector("#sandwich2");
+
+  const sandwich = anime.timeline({
+    targets: buttonSandwich.children,
+    autoplay: false,
+    easing: 'easeOutSine',
+    duration: 250,
+  })
+    .add({
+      opacity: (el, index) => {
+        if (index === 1) return [1, 0];
+      },
+      translateY: (el, index) => {
+        const qty = 10;
+        if (index === 1) return 0;
+        return index ? -qty : qty;
+      },
+    })
+    .add({
+      rotateZ: (el, index) => {
+        const qty = 45;
+        if (index === 1) return 0;
+        return index ? -qty : qty;
+      }
+    })
+
+  const palletes = document.querySelectorAll("[data-pallete]");
+
+  const animePallete = anime({
+    targets: palletes,
+    autoplay: false,
+    scale: [0, 1],
+    opacity: {
+      value: [0, 1],
+      easing: "easeOutQuint"
+    },
+    delay: anime.stagger(150),
+  })
+
+  buttonSandwich.addEventListener('click', async (event) => {
+    event.preventDefault();
+    sandwich.play();
+    animePallete.play();
+    await Promise.all([sandwich.finished, animePallete.finished]);
+    sandwich.reverse();
+    animePallete.reverse();
+  })
+}
