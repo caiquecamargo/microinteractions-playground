@@ -117,7 +117,7 @@ import anime from 'animejs';
   })
 }
 
-// //FIVE
+// FIVE
 {
   const start = document.querySelector('#five .start');
 
@@ -238,5 +238,97 @@ import anime from 'animejs';
     await Promise.all([sandwich.finished, animePallete.finished]);
     sandwich.reverse();
     animePallete.reverse();
+  })
+}
+
+//EIGTH 
+{
+  const svg = document.querySelector("#svg");
+
+  const start = document.querySelector("#eigth .start") as HTMLElement;
+
+
+  const animation = anime({
+    targets: svg,
+    width: [0, "100%"],
+    autoplay: false,
+    easing: "easeInOutSine",
+    duration: 1000,
+  })
+
+  start.addEventListener("click", (event) => {
+    event.preventDefault();
+    animation.play();
+  })
+}
+
+// NINE 
+{
+  const circle = document.querySelector("#nine .circle");
+
+  const start = document.querySelector("#nine .start") as HTMLElement;
+
+  const path = anime.path("#nine #svg svg path");
+
+
+  const animation = anime({
+    targets: circle,
+    translateX: path('x'),
+    translateY: path('y'),
+    autoplay: false,
+    easing: "easeInOutSine",
+    duration: 5000,
+  })
+
+  start.addEventListener("click", (event) => {
+    event.preventDefault();
+    animation.play();
+  })
+}
+
+// TEN
+{
+  const circle = document.querySelector("#ten .circle");
+
+  const start = document.querySelector("#ten .start") as HTMLElement;
+
+  const path = anime.path("#ten #svg svg path");
+
+  const svg = document.querySelector("#ten #svg");
+
+  const animationSVG = anime.timeline({
+    targets: svg,
+    autoplay: false,
+    easing: "linear",
+  }).add({
+    width: [0, "15%"],
+    duration: 550,
+  }).add({
+    width: ["15%", "20%"],
+    duration: 450,
+  }).add({
+    width: ["20%", "30%"],
+    duration: 300,
+  }).add({
+    width: ["30%", "50%"],
+    duration: 600,
+  }).add({
+    width: ["50%", "100%"],
+    duration: 600,
+  })
+
+  const animation = anime({
+    targets: circle,
+    translateX: path('x'),
+    translateY: path('y'),
+    autoplay: false,
+    easing: "easeInSine",
+    duration: 3000,
+  })
+
+  start.addEventListener("click", (event) => {
+    event.preventDefault();
+    animation.play();
+    animationSVG.play();
   })
 }
