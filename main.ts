@@ -1,5 +1,5 @@
 import './style.scss'
-import anime from 'animejs';
+import anime, { AnimeInstance } from 'animejs';
 
 //ONE
 {
@@ -331,4 +331,102 @@ import anime from 'animejs';
     animation.play();
     animationSVG.play();
   })
+}
+
+// ELEVEN
+{
+  class ElementAnimator {
+    private _animation: AnimeInstance;
+    private _to: string;
+
+    constructor(private _element: HTMLElement, private _position: number, private _size: number, private _visibleElements: number) {
+      this.turnElement();
+    }
+
+    async turn(to: string) {
+      this._to = to;
+      this.setPosition();
+      this.createAnimation();
+      await this.animate();
+      this._animation.seek(0);
+      this.turnElement();
+    }
+
+    animate() {
+      this._animation.play();
+      return this._animation.finished;
+    }
+
+    createAnimation() {
+      if (this._to === "left") this._animation = this._position === this._size - 1 ? this.leftToLeft() : this.turnLeft();
+      else this._animation = this._position > this._visibleElements ? this.leftToRight() : this.turnRight();
+    };
+
+    turnElement() {
+      this._element.style.gridColumn = `${this._position + 1}`;
+      if (this._position > this._visibleElements) this._element.style.display = "none";
+      else this._element.style.display = "flex";
+    }
+
+    setPosition() {
+      if (this._to === "left") this._position = this._position === 0 ? this._size - 1 : this._position - 1;
+      else this._position = (this._position + 1) % this._size;
+    }
+
+    turnLeft() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        translateX: -500,
+        duration: 200,
+        easing: "linear",
+      });
+    }
+
+    turnRight() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        translateX: 500,
+        duration: 200,
+        easing: "linear",
+      });
+    }
+
+    leftToLeft() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        opacity: 0,
+        translateX: -500,
+        duration: 200,
+        easing: "linear",
+      });
+    }
+
+    leftToRight() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        opacity: 0,
+        translateX: 500,
+        duration: 200,
+        easing: "linear",
+      });
+    }
+  }
+  const leftButton = document.querySelector("#eleven .arrow-left");
+  const rightButton = document.querySelector("#eleven .arrow-right");
+
+  const items: ElementAnimator[] = Array.from(document.querySelectorAll("#eleven .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length, 2));
+
+  rightButton.addEventListener("click", () => {
+    items.forEach(item => item.turn("left"));
+  })
+
+  leftButton.addEventListener("click", () => {
+    items.forEach(item => item.turn("right"));
+  })
+
+
 }
