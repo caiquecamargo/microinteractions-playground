@@ -335,21 +335,44 @@ import anime, { AnimeInstance } from 'animejs';
 
 // ELEVEN
 {
+  interface ElementAnimatorOptions {
+    visibleElements: number, gap: number,
+  }
+
   class ElementAnimator {
     private _animation: AnimeInstance;
-    private _to: string;
+    private _type: string;
+    private _from: number;
+    private _to: number;
+    private _move: number;
+    private _width: number;
+    private _visibleElements: number;
+    private _gap: number;
 
-    constructor(private _element: HTMLElement, private _position: number, private _size: number, private _visibleElements: number) {
-      this.turnElement();
+    constructor(private _element: HTMLElement, private _position: number, private _length: number, options?: ElementAnimatorOptions) {
+      this._from = this._position;
+      this._to = this._position;
+      this._visibleElements = options?.visibleElements || 3;
+      this._gap = options?.gap || 20;
+
+      this.calculateElementWidth();
+      this._width = this._element.offsetWidth;
+      this._move = this._width + this._gap;
+      this._animation = this.turnLeft();
     }
 
-    async turn(to: string) {
-      this._to = to;
+    calculateElementWidth() {
+      const containerWidth = this._element.parentElement.offsetWidth;
+      const minWidth = (containerWidth / this._visibleElements) - (this._gap + (this._gap / this._visibleElements));
+      this._element.style.minWidth = `${minWidth}px`;
+    }
+
+    async turn(type: string) {
+      this._type = type;
       this.setPosition();
       this.createAnimation();
       await this.animate();
-      this._animation.seek(0);
-      this.turnElement();
+      this._from = this._to;
     }
 
     animate() {
@@ -358,26 +381,50 @@ import anime, { AnimeInstance } from 'animejs';
     }
 
     createAnimation() {
-      if (this._to === "left") this._animation = this._position === this._size - 1 ? this.leftToLeft() : this.turnLeft();
-      else this._animation = this._position > this._visibleElements ? this.leftToRight() : this.turnRight();
+      if (this._type === "left") {
+        switch (this._to) {
+          case -1:
+            this._animation = this.leave();
+            break;
+          case this._visibleElements - 1:
+            this._animation = this.enter();
+            break;
+          default:
+            this._animation = this.turnLeft();
+            break;
+        }
+      }
+      else {
+        switch (this._to) {
+          case this._visibleElements:
+            this._animation = this.leave();
+            break;
+          case 0:
+            this._animation = this.enter();
+            break;
+          default:
+            this._animation = this.turnRight();
+            break;
+        }
+      }
     };
 
-    turnElement() {
-      this._element.style.gridColumn = `${this._position + 1}`;
-      if (this._position > this._visibleElements) this._element.style.display = "none";
-      else this._element.style.display = "flex";
-    }
-
     setPosition() {
-      if (this._to === "left") this._position = this._position === 0 ? this._size - 1 : this._position - 1;
-      else this._position = (this._position + 1) % this._size;
+      if (this._type === "left") {
+        if (this._from === -1) this._from = this._length - 1;
+        this._to = this._from - 1;
+      }
+      else {
+        if (this._from === this._length - 1) this._from = -1;
+        this._to = this._from + 1;
+      }
     }
 
     turnLeft() {
       return anime({
         targets: this._element,
         autoplay: false,
-        translateX: -500,
+        translateX: [this._from * this._move, this._to * this._move],
         duration: 200,
         easing: "linear",
       });
@@ -387,29 +434,29 @@ import anime, { AnimeInstance } from 'animejs';
       return anime({
         targets: this._element,
         autoplay: false,
-        translateX: 500,
+        translateX: [this._from * this._move, this._to * this._move],
         duration: 200,
         easing: "linear",
       });
     }
 
-    leftToLeft() {
+    enter() {
       return anime({
         targets: this._element,
         autoplay: false,
-        opacity: 0,
-        translateX: -500,
+        opacity: [0, 1],
+        translateX: [this._from * this._move, this._to * this._move],
         duration: 200,
         easing: "linear",
       });
     }
 
-    leftToRight() {
+    leave() {
       return anime({
         targets: this._element,
         autoplay: false,
-        opacity: 0,
-        translateX: 500,
+        opacity: [1, 0],
+        translateX: [this._from * this._move, this._to * this._move],
         duration: 200,
         easing: "linear",
       });
@@ -418,7 +465,7 @@ import anime, { AnimeInstance } from 'animejs';
   const leftButton = document.querySelector("#eleven .arrow-left");
   const rightButton = document.querySelector("#eleven .arrow-right");
 
-  const items: ElementAnimator[] = Array.from(document.querySelectorAll("#eleven .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length, 2));
+  const items: ElementAnimator[] = Array.from(document.querySelectorAll("#eleven .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length));
 
   rightButton.addEventListener("click", () => {
     items.forEach(item => item.turn("left"));
