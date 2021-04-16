@@ -1,5 +1,5 @@
 import './style.scss'
-import anime from 'animejs';
+import anime, { AnimeInstance, AnimeTimelineInstance } from 'animejs';
 
 //ONE
 {
@@ -330,5 +330,46 @@ import anime from 'animejs';
     event.preventDefault();
     animation.play();
     animationSVG.play();
+  })
+}
+
+// TWELVE
+{
+  const start = document.querySelector('#twelve .start') as HTMLElement;
+
+  const textWrapperOne = document.querySelector('#twelve .text-one');
+  textWrapperOne.innerHTML = textWrapperOne.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+  const textWrapperTwo = document.querySelector('#twelve .text-two');
+  textWrapperTwo.innerHTML = textWrapperTwo.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+  const animation = anime.timeline({ autoplay: false })
+    .add({
+      targets: textWrapperOne.children,
+      scale: [2, 1],
+      opacity: [0, 1],
+      translateZ: 0,
+      easing: "easeOutExpo",
+      duration: 950,
+      delay: (el, i) => 70 * i
+    })
+    .add({
+      targets: textWrapperTwo.children,
+      scale: [2, 1],
+      opacity: [0, 1],
+      translateZ: 0,
+      easing: "easeOutExpo",
+      duration: 950,
+      delay: (el, i) => 70 * i
+    })
+    .add({
+      targets: '#twelve .letter',
+      opacity: 0,
+      duration: 1000,
+      easing: "easeOutExpo",
+      delay: 1000
+    })
+
+  start.addEventListener('click', (event) => {
+    event.preventDefault();
+    animation.play();
   })
 }
