@@ -358,7 +358,7 @@ import anime, { AnimeInstance } from 'animejs';
       this.calculateElementWidth();
       this._width = this._element.offsetWidth;
       this._move = this._width + this._gap;
-      this._animation = this.turnLeft();
+      this._animation = this.swap();
     }
 
     calculateElementWidth() {
@@ -390,7 +390,7 @@ import anime, { AnimeInstance } from 'animejs';
             this._animation = this.enter();
             break;
           default:
-            this._animation = this.turnLeft();
+            this._animation = this.swap();
             break;
         }
       }
@@ -403,7 +403,7 @@ import anime, { AnimeInstance } from 'animejs';
             this._animation = this.enter();
             break;
           default:
-            this._animation = this.turnRight();
+            this._animation = this.swap();
             break;
         }
       }
@@ -420,17 +420,7 @@ import anime, { AnimeInstance } from 'animejs';
       }
     }
 
-    turnLeft() {
-      return anime({
-        targets: this._element,
-        autoplay: false,
-        translateX: [this._from * this._move, this._to * this._move],
-        duration: 200,
-        easing: "linear",
-      });
-    }
-
-    turnRight() {
+    swap() {
       return anime({
         targets: this._element,
         autoplay: false,
@@ -514,5 +504,149 @@ import anime, { AnimeInstance } from 'animejs';
   start.addEventListener('click', (event) => {
     event.preventDefault();
     animation.play();
+  })
+}
+
+// THIRTEEN
+{
+  interface ElementAnimatorOptions {
+    visibleElements: number,
+    width: number,
+  }
+
+  class ElementAnimator {
+    private _animation: AnimeInstance;
+    private _type: string;
+    private _from: number;
+    private _to: number;
+    private _center: number;
+    private _move: number;
+    private _width: number;
+    private _visibleLayer: number;
+
+    constructor(private _element: HTMLElement, private _position: number, private _length: number, options?: ElementAnimatorOptions) {
+      if (this._length % 2 === 0) throw new ErrorEvent("The number of elements must be odd.");
+
+      this._from = this._position;
+      this._to = this._position;
+
+      this._width = options?.width || 300;
+      this._element.style.width = `${this._width}px`;
+      this._element.style.left = `calc(50% - ${this._width / 2}px)`;
+      this._move = this._width / 2;
+      this._center = Math.floor(this._length / 2);
+
+      let visibleElements = options?.visibleElements || this._length;
+      this._visibleLayer = this.calcLayer(visibleElements);
+      this.setZ();
+      this.setVisibility();
+      this.createAnimation();
+    }
+
+    calcLayer(number: number) {
+      const offset = Math.abs(this._center - number);
+      return offset;
+    }
+
+    setVisibility() {
+      const fromLayer = this.calcLayer(this._from);
+      const opacity = this.isVisible(fromLayer) ? 1 : 0;
+      this._element.style.opacity = `${opacity}`;
+    }
+
+    setZ() {
+      const layer = this.calcLayer(this._from);
+      const z = 5;
+      this._element.style.zIndex = `${z - layer}`;
+    }
+
+    async turn(type: string) {
+      this._type = type;
+      this.setPosition();
+      this.createAnimation();
+      await this.animate();
+      this._from = this._to;
+      this.setZ();
+    }
+
+    animate() {
+      this._animation.play();
+      return this._animation.finished;
+    }
+
+    isVisible(layer: number) {
+      return layer <= this._visibleLayer;
+    }
+
+    createAnimation() {
+      const toLayer = this.calcLayer(this._to);
+      const fromLayer = this.calcLayer(this._from);
+
+      if (!this.isVisible(fromLayer) && this.isVisible(toLayer)) this._animation = this.enter();
+      else if (this.isVisible(fromLayer) && !this.isVisible(toLayer)) this._animation = this.leave();
+      else this._animation = this.swap();
+    };
+
+    setPosition() {
+      if (this._type === "left") {
+        this._to = this._from === 0 ? this._length - 1 : this._from - 1;
+      }
+      else {
+        this._to = this._from === this._length - 1 ? 0 : this._from + 1;
+      }
+    }
+
+    calcScale() {
+      const toLayer = this.calcLayer(this._to);
+      const fromLayer = this.calcLayer(this._from)
+      return [1 - (fromLayer / 10), 1 - (toLayer / 10)];
+    }
+
+    swap() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        scale: this.calcScale(),
+        translateX: [(this._from - this._center) * this._move, (this._to - this._center) * this._move],
+        duration: 200,
+        easing: "linear",
+      });
+    }
+
+    enter() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        scale: this.calcScale(),
+        opacity: [0, 1],
+        translateX: [(this._from - this._center) * this._move, (this._to - this._center) * this._move],
+        duration: 200,
+        easing: "linear",
+      });
+    }
+
+    leave() {
+      return anime({
+        targets: this._element,
+        autoplay: false,
+        scale: this.calcScale(),
+        opacity: [1, 0],
+        translateX: [(this._from - this._center) * this._move, (this._to - this._center) * this._move],
+        duration: 200,
+        easing: "linear",
+      });
+    }
+  }
+  const leftButton = document.querySelector("#thirteen .arrow-left");
+  const rightButton = document.querySelector("#thirteen .arrow-right");
+
+  const items: ElementAnimator[] = Array.from(document.querySelectorAll("#thirteen .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length));
+
+  rightButton.addEventListener("click", () => {
+    items.forEach(item => item.turn("left"));
+  })
+
+  leftButton.addEventListener("click", () => {
+    items.forEach(item => item.turn("right"));
   })
 }

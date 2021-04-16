@@ -363,3 +363,60 @@ body {
     }
   }
 }
+
+#thirteen {
+
+  position: relative;
+
+  .container {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    height: 500px;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start;
+    column-gap: 20px;
+    overflow: hidden;
+  }
+
+  .card {
+    height: 500px;
+    background-color: #aaa;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+    transition: 150ms;
+
+    svg line {
+      transition: 150ms;
+    }
+
+    &:hover {
+      svg line {
+        transition: 450ms;
+        stroke: #000;
+      }
+    }
+  }
+
+  .arrow-right {
+    transform: rotate(180deg);
+    left: 80%;
+    z-index: 100;
+  }
+
+  .arrow-left {
+    left: 18%;
+    z-index: 100;
+  }
+}
