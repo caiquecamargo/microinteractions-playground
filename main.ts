@@ -1,9 +1,5 @@
 import './style.scss'
-<<<<<<< HEAD
-import anime, { AnimeInstance, AnimeTimelineInstance } from 'animejs';
-=======
 import anime, { AnimeInstance } from 'animejs';
->>>>>>> 20670c3aafa74aeb487cceac9123f99009897446
 
 //ONE
 {
