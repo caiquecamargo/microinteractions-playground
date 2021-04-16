@@ -454,6 +454,7 @@ import anime, { AnimeInstance } from 'animejs';
   }
   const leftButton = document.querySelector("#eleven .arrow-left");
   const rightButton = document.querySelector("#eleven .arrow-right");
+  const container = document.querySelector("#eleven") as HTMLElement;
 
   const items: ElementAnimator[] = Array.from(document.querySelectorAll("#eleven .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length));
 
@@ -464,6 +465,26 @@ import anime, { AnimeInstance } from 'animejs';
   leftButton.addEventListener("click", () => {
     items.forEach(item => item.turn("right"));
   })
+
+  let startPositionX = 0;
+  let endPositionX = 0;
+  container.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    startPositionX = touch.pageX;
+  })
+
+  container.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    endPositionX = touch.pageX;
+    turnElements();
+  })
+
+  const turnElements = () => {
+    if (startPositionX - endPositionX > 50) items.forEach(item => item.turn("left"));
+    if (startPositionX - endPositionX < -50) items.forEach(item => item.turn("right"));
+  }
 }
 
 // TWELVE
@@ -639,6 +660,7 @@ import anime, { AnimeInstance } from 'animejs';
   }
   const leftButton = document.querySelector("#thirteen .arrow-left");
   const rightButton = document.querySelector("#thirteen .arrow-right");
+  const container = document.querySelector("#thirteen") as HTMLElement;
 
   const items: ElementAnimator[] = Array.from(document.querySelectorAll("#thirteen .card")).map((item, index, array) => new ElementAnimator(item as HTMLElement, index, array.length));
 
@@ -649,4 +671,24 @@ import anime, { AnimeInstance } from 'animejs';
   leftButton.addEventListener("click", () => {
     items.forEach(item => item.turn("right"));
   })
+
+  let startPositionX = 0;
+  let endPositionX = 0;
+  container.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    startPositionX = touch.pageX;
+  })
+
+  container.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    endPositionX = touch.pageX;
+    turnElements();
+  })
+
+  const turnElements = () => {
+    if (startPositionX - endPositionX > 50) items.forEach(item => item.turn("left"));
+    if (startPositionX - endPositionX < -50) items.forEach(item => item.turn("right"));
+  }
 }
